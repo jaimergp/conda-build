@@ -1049,16 +1049,17 @@ def create_env(
                         timeout=config.timeout,
                     )
                     utils.trim_empty_keys(actions)
-                    try:
-                        display_actions(actions, index)
-                    except Exception as exc:
-                        # this is just reporting, let's see what happens if we continue
-                        log.warn("failed to display actions", exc_info=exc)
-                    if utils.on_win:
-                        for k, v in os.environ.items():
-                            os.environ[k] = str(v)
                     with env_var("CONDA_QUIET", not config.verbose, reset_context):
                         with env_var("CONDA_JSON", not config.verbose, reset_context):
+                            try:
+                                display_actions(actions, index)
+                            except Exception as exc:
+                                # this is just reporting, let's see what happens if we continue
+                                print("failed to display actions", type(exc), exc)
+                                import traceback; traceback.print_exc()
+                            if utils.on_win:
+                                for k, v in os.environ.items():
+                                    os.environ[k] = str(v)
                             execute_actions(actions, index)
             except (
                 SystemExit,
