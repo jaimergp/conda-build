@@ -1049,7 +1049,11 @@ def create_env(
                         timeout=config.timeout,
                     )
                     utils.trim_empty_keys(actions)
-                    display_actions(actions, index)
+                    try:
+                        display_actions(actions, index)
+                    except Exception as exc:
+                        # this is just reporting, let's see what happens if we continue
+                        log.warn("failed to display actions", exc_info=exc)
                     if utils.on_win:
                         for k, v in os.environ.items():
                             os.environ[k] = str(v)
